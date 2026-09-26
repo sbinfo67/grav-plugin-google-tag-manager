@@ -1,16 +1,16 @@
 name: Google Tag Manager
-slug: gtm-plugin
+slug: google-tag-manager
 type: plugin
-version: 0.2.0
+version: 1.0.0
 description: Inserts the Google Tag Manager container in every page, at the top of the head with its noscript fallback after the body tag, without touching the theme.
 icon: tags
 author:
   name: SBINFO
   email: contact@sbinfo.fr
-homepage: https://github.com/sbinfo67/grav-plugin-gtm-plugin
+homepage: https://github.com/sbinfo67/grav-plugin-google-tag-manager
 keywords: grav, plugin, google tag manager, gtm, analytics, datalayer
-bugs: https://github.com/sbinfo67/grav-plugin-gtm-plugin/issues
-docs: https://github.com/sbinfo67/grav-plugin-gtm-plugin/blob/main/README.md
+bugs: https://github.com/sbinfo67/grav-plugin-google-tag-manager/issues
+docs: https://github.com/sbinfo67/grav-plugin-google-tag-manager/blob/main/README.md
 license: MIT
 
 # Testée sur Grav 1.7.53.4, 2.0.26, 2.1.10 et 2.2.1 (Admin2 2.1.24).
@@ -35,9 +35,9 @@ form:
         type: bool
     container_id:
       type: text
-      label: PLUGIN_GTM_PLUGIN.CONTAINER_ID
-      help: PLUGIN_GTM_PLUGIN.CONTAINER_ID_HELP
-      description: PLUGIN_GTM_PLUGIN.CONTAINER_ID_DESCRIPTION
+      label: PLUGIN_GOOGLE_TAG_MANAGER.CONTAINER_ID
+      help: PLUGIN_GOOGLE_TAG_MANAGER.CONTAINER_ID_HELP
+      description: PLUGIN_GOOGLE_TAG_MANAGER.CONTAINER_ID_DESCRIPTION
       placeholder: GTM-XXXXXXX
       default: ''
       validate:

@@ -1,11 +1,11 @@
 en:
-  PLUGIN_GTM_PLUGIN:
+  PLUGIN_GOOGLE_TAG_MANAGER:
     CONTAINER_ID: GTM Container ID
     CONTAINER_ID_HELP: The GTM Container ID, shown at the top right of the Tag Manager workspace
     CONTAINER_ID_DESCRIPTION: Of the form GTM-XXXXXXX. Nothing is inserted while it is empty or malformed.
 
 fr:
-  PLUGIN_GTM_PLUGIN:
+  PLUGIN_GOOGLE_TAG_MANAGER:
     CONTAINER_ID: Identifiant du conteneur GTM
     CONTAINER_ID_HELP: L'identifiant du conteneur, affiché en haut à droite de l'espace de travail Tag Manager
     CONTAINER_ID_DESCRIPTION: De la forme GTM-XXXXXXX. Rien n'est inséré tant qu'il est vide ou mal formé.

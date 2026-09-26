@@ -5,14 +5,14 @@ use Grav\Common\Plugin;
 use RocketTheme\Toolbox\Event\Event;
 
 /**
- * Class GtmPluginPlugin
+ * Class GoogleTagManagerPlugin
  * @package Grav\Plugin
  *
  * Inserts the Google Tag Manager container in every HTML page: the script at
  * the top of <head>, the <noscript> fallback right after the opening <body>.
  * Both go into the final output, so the theme needs no change.
  */
-class GtmPluginPlugin extends Plugin
+class GoogleTagManagerPlugin extends Plugin
 {
     /** A GTM container ID is "GTM-" followed by letters and digits. */
     private const CONTAINER_ID_PATTERN = '/^GTM-[A-Z0-9]+$/';
@@ -46,7 +46,7 @@ class GtmPluginPlugin extends Plugin
      * Insert the container into the rendered page.
      *
      * The page frontmatter can override the plugin settings, e.g.
-     * `gtm-plugin: false` to leave one page out.
+     * `google-tag-manager: false` to leave one page out.
      */
     public function onOutputGenerated(Event $event): void
     {
@@ -85,9 +85,9 @@ class GtmPluginPlugin extends Plugin
 
         if (!preg_match(self::CONTAINER_ID_PATTERN, $containerId)) {
             $cache = $this->grav['cache'];
-            $key = 'gtm-plugin-invalid-' . md5($containerId);
+            $key = 'google-tag-manager-invalid-' . md5($containerId);
             if (!$cache->contains($key)) {
-                $this->grav['log']->warning(sprintf('GTM plugin: container ID "%s" ignored, expected GTM-XXXXXXX', $value));
+                $this->grav['log']->warning(sprintf('Google Tag Manager plugin: container ID "%s" ignored, expected GTM-XXXXXXX', $value));
                 $cache->save($key, true);
             }
 

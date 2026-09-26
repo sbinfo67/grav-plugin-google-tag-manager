@@ -1,3 +1,11 @@
+# v1.0.0
+## 2026-09-27
+
+1. [](#improved)
+    * L'extension s'appelle désormais `google-tag-manager` : dossier `user/plugins/google-tag-manager`, configuration `user/config/plugins/google-tag-manager.yaml`, clé `google-tag-manager:` dans l'en-tête des pages. Le README explique le passage depuis `gtm-plugin`
+    * Dépôt renommé `grav-plugin-google-tag-manager`, les anciennes adresses redirigent
+    * Testée sur Grav 1.7.53.4 et 2.2.1, avec Admin2 2.1.24
+
 # v0.2.0
 ## 2026-09-27
 
