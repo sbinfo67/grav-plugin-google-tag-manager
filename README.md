@@ -1,76 +1,102 @@
-# Gtm Plugin Plugin
+# Google Tag Manager pour Grav
 
-The **Gtm Plugin** Plugin is an extension for [Grav CMS](https://github.com/getgrav/grav). Installs Google Tag Manager code and updates the dataLayer without any changes to code.
+> **In English.** A Grav plugin that inserts a Google Tag Manager container in every
+> HTML page, without touching the theme: the GTM script right at the top of `<head>`
+> (after `<meta charset>`), and its `<noscript>` fallback right after the opening
+> `<body>` tag, as Google recommends. Works with Grav 1.7 and Grav 2 (tested up to
+> 2.2.1 with Admin2 2.1.24). Set `container_id` to your `GTM-XXXXXXX` ID; an empty or
+> malformed ID inserts nothing. A page can opt out with `gtm-plugin: false` in its
+> frontmatter, or use another container with `gtm-plugin: { container_id: GTM-… }`.
+> XML, JSON and other non-HTML responses are left untouched. The plugin does not
+> handle consent: use Consent Mode in GTM or a consent banner.
 
 ## Installation
 
-Installing the Gtm Plugin plugin can be done in one of three ways: The GPM (Grav Package Manager) installation method lets you quickly install the plugin with a simple terminal command, the manual method lets you do so via a zip file, and the admin method lets you do so via the Admin Plugin.
+L'extension n'est pas au catalogue GPM : on l'installe à la main, dans un dossier qui
+doit s'appeler `gtm-plugin`.
 
-### GPM Installation (Preferred)
+Avec git, depuis la racine de Grav :
 
-To install the plugin via the [GPM](https://learn.getgrav.org/cli-console/grav-cli-gpm), through your system's terminal (also called the command line), navigate to the root of your Grav-installation, and enter:
+```bash
+git clone https://github.com/sbinfo67/grav-plugin-gtm-plugin user/plugins/gtm-plugin
+```
 
-    bin/gpm install gtm-plugin
+Ou en téléchargeant l'archive de la
+[dernière version](https://github.com/sbinfo67/grav-plugin-gtm-plugin/releases/latest),
+puis en renommant le dossier décompressé en `user/plugins/gtm-plugin`.
 
-This will install the Gtm Plugin plugin into your `/user/plugins`-directory within Grav. Its files can be found under `/your/site/grav/user/plugins/gtm-plugin`.
+Videz ensuite le cache (`bin/grav clearcache`, ou le contenu de `cache/`).
 
-### Manual Installation
+## Réglages
 
-To install the plugin manually, download the zip-version of this repository and unzip it under `/your/site/grav/user/plugins`. Then rename the folder to `gtm-plugin`. You can find these files on [GitHub](https://github.com/jaymurphy1997/grav-plugin-gtm-plugin) or via [GetGrav.org](https://getgrav.org/downloads/plugins).
+Dans Admin2 ou l'administration classique : Extensions, puis **Google Tag Manager**.
+Activez l'extension et saisissez l'identifiant du conteneur, affiché en haut à droite
+de l'espace de travail Tag Manager.
 
-You should now have all the plugin files under
-
-    /your/site/grav/user/plugins/gtm-plugin
-	
-> NOTE: This plugin is a modular component for Grav which may require other plugins to operate, please see its [blueprints.yaml-file on GitHub](https://github.com/jaymurphy1997/grav-plugin-gtm-plugin/blob/main/blueprints.yaml).
-
-### Admin Plugin
-
-If you use the Admin Plugin, you can install the plugin directly by browsing the `Plugins`-menu and clicking on the `Add` button.
-
-## Configuration
-
-Before configuring this plugin, you should copy the `user/plugins/gtm-plugin/gtm-plugin.yaml` to `user/config/plugins/gtm-plugin.yaml` and only edit that copy.
-
-Here is the default configuration and an explanation of available options:
+Ou dans `user/config/plugins/gtm-plugin.yaml` :
 
 ```yaml
 enabled: true
+container_id: GTM-XXXXXXX
+```
+
+| Clé | Par défaut | Rôle |
+|---|---|---|
+| `enabled` | `false` | Active l'extension |
+| `container_id` | vide | Identifiant du conteneur, de la forme `GTM-XXXXXXX` |
+
+L'identifiant est ramené en majuscules et débarrassé de ses espaces. Tant qu'il est
+vide, rien n'est inséré et rien n'est journalisé. S'il n'a pas la forme `GTM-` suivie
+de lettres et de chiffres, rien n'est inséré non plus, et un avertissement est écrit
+une fois dans `logs/grav.log`.
+
+### Page par page
+
+L'en-tête d'une page peut changer ces réglages pour elle seule :
+
+```yaml
+gtm-plugin: false            # pas de GTM sur cette page
 ```
 
 ```yaml
-GTM Container ID: Add the Container ID here
+gtm-plugin:
+  container_id: GTM-AUTRE42  # un autre conteneur
 ```
 
-* GTM Container ID: Fill in with the GTM Container ID from Google Tag Manager (typically of the form "GTM-.*")
+## Ce que fait l'extension
 
-Note that if you use the Admin Plugin, a file with your configuration named gtm-plugin.yaml will be saved in the `user/config/plugins/`-folder once the configuration is saved in the Admin.
+Une fois la page produite par le thème, l'extension insère :
 
-## Usage
-First you will need to create a Google Tag Manager container.  Follow the steps below:
-1. Sign in to your [Google Tag Manager account](https://analytics.google.com/).
-2. Select the **Admin** tab.
-3. Select an account from the dropdown in the _ACCOUNT_ column.
-4. Select a Container from the dropdown in the _CONTAINER_ column.
-5. In the upper right hand of the _WORKSPACE_ _OVERVIEW_, click the link starting with "GTM-" - copy this full string - it is your **GTM CONTAINER ID** 
-6. Copy the **GTM CONTAINER ID** (a string like _GTM-XXXXXXX_)
+- le script de GTM en haut du `<head>`, juste après `<meta charset>` s'il existe
+  (la déclaration d'encodage doit rester dans les 1 024 premiers octets), sinon
+  juste après `<head>` ;
+- le `<noscript>` et son iframe juste après la balise `<body>`.
 
-Now add this Container ID to the Grav Gtm Plugin
+Le code est celui que fournit Google, avec la couche de données `dataLayer`. Le thème
+n'a rien à appeler. Seules les réponses HTML sont modifiées, et l'administration n'est
+jamais touchée.
 
-1. Login to your Grav CMS Admin
-2. Click on the Plugins menu on the left side of your Admin panel.
-3. Click on the "Gtm Plugin" link.
-4. Enable the plugin
-5. Add the Container ID to the "GTM Container ID" plugin field.
-6. Click on the Save button (upper right hand corner).
+## Consentement
 
-## Credits
+L'extension charge GTM sur chaque page, sans attendre le consentement du visiteur.
+Sur un site soumis au RGPD, configurez le mode Consentement (Consent Mode) dans GTM,
+ou un bandeau de gestion du consentement qui s'y raccorde.
 
-Inspired by the Grav Ganalytics Plugin, John Linhart (admin@escope.cz), Christian Worreschk (cw@marsec.de)
-https://github.com/escopecz/grav-ganalytics Thanks!
+## Mise à jour depuis la 0.1.0
 
-## To Do
+La clé de configuration n'a pas changé : un `user/config/plugins/gtm-plugin.yaml`
+existant continue de fonctionner. Le code n'est plus inséré par `assets.js()` mais
+directement dans la page, en haut du `<head>` : retirez tout code GTM ajouté à la main
+dans le thème, sans quoi le conteneur serait chargé deux fois.
 
-- [ ] Allow different 'dataLayer' names
-- [ ] Add website and page information to the dataLayer to allow marketing tag capture and future analysis
+## Crédits
 
+Extension créée par James H Murphy
+([jaymurphy1997/grav-plugin-gtm-plugin](https://github.com/jaymurphy1997/grav-plugin-gtm-plugin)),
+elle-même inspirée de l'extension
+[Grav Ganalytics](https://github.com/escopecz/grav-ganalytics). Reprise et corrigée
+par SBINFO à partir de la 0.2.0.
+
+## Licence
+
+MIT, voir [LICENSE](LICENSE).

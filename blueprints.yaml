@@ -1,21 +1,24 @@
-name: Gtm Plugin
+name: Google Tag Manager
 slug: gtm-plugin
 type: plugin
-version: 0.1.0
-description: Installs Google Tag Manager code and updates the dataLayer.
-icon: plug
+version: 0.2.0
+description: Inserts the Google Tag Manager container in every page, at the top of the head with its noscript fallback after the body tag, without touching the theme.
+icon: tags
 author:
-  name: James H Murphy
-  email: jmurphy@trionia.com
-homepage: https://github.com/jaymurphy1997/grav-plugin-gtm-plugin
-demo: http://demo.yoursite.com
-keywords: grav, plugin, etc
-bugs: https://github.com/jaymurphy1997/grav-plugin-gtm-plugin/issues
-docs: https://github.com/jaymurphy1997/grav-plugin-gtm-plugin/blob/develop/README.md
+  name: SBINFO
+  email: contact@sbinfo.fr
+homepage: https://github.com/sbinfo67/grav-plugin-gtm-plugin
+keywords: grav, plugin, google tag manager, gtm, analytics, datalayer
+bugs: https://github.com/sbinfo67/grav-plugin-gtm-plugin/issues
+docs: https://github.com/sbinfo67/grav-plugin-gtm-plugin/blob/main/README.md
 license: MIT
 
+# Testée sur Grav 1.7.53.4, 2.0.26, 2.1.10 et 2.2.1 (Admin2 2.1.24).
+compatibility:
+  grav: ['1.7', '2.0']
+
 dependencies:
-  - { name: grav, version: '>=1.6.0' }
+  - { name: grav, version: '>=1.7.0' }
 
 form:
   validation: loose
@@ -34,3 +37,8 @@ form:
       type: text
       label: PLUGIN_GTM_PLUGIN.CONTAINER_ID
       help: PLUGIN_GTM_PLUGIN.CONTAINER_ID_HELP
+      description: PLUGIN_GTM_PLUGIN.CONTAINER_ID_DESCRIPTION
+      placeholder: GTM-XXXXXXX
+      default: ''
+      validate:
+        max: 30
