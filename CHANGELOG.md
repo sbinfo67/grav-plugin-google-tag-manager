@@ -1,3 +1,10 @@
+# v1.0.1
+## 2026-09-27
+
+1. [](#improved)
+    * Documentation in English: the README and the CHANGELOG were in French. The settings screen is still available in English and French
+    * README: the GTM code has been written into the page instead of added through `assets.js()` since 0.2.0, not 0.1.0
+
 # v1.0.0
 ## 2026-09-27
 
