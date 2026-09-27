@@ -1,3 +1,13 @@
+# v1.0.2
+## 2026-09-27
+
+1. [](#bugfix)
+    * A `<body` written inside a comment, an inline script or the title of the head no longer receives the `<noscript>`. Thanks @rhukster for the tip ([getgrav/grav#4334](https://github.com/getgrav/grav/issues/4334))
+    * A `<meta charset` inside a comment placed before the real one no longer receives the GTM script, which then never loaded
+    * Comments and the text of `script`, `style`, `title` and `textarea` elements are skipped while looking for `<head>`, `<meta charset>` and `<body>`
+2. [](#improved)
+    * README: installation from the GPM directory
+
 # v1.0.1
 ## 2026-09-27
 

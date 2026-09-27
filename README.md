@@ -7,11 +7,14 @@ and Grav 2, tested up to Grav 2.2.1 with Admin2 2.1.24.
 
 ## Installation
 
-The plugin has been submitted to the GPM directory
-([getgrav/grav#4334](https://github.com/getgrav/grav/issues/4334)). Until it is listed,
-install it by hand, in a folder that must be named `google-tag-manager`.
+From Admin2 (Plugins, then Add) or the classic admin, or on the command line:
 
-With git, from the root of your Grav installation:
+```bash
+bin/gpm install google-tag-manager
+```
+
+Or by hand, in a folder that must be named `google-tag-manager`. With git, from the root
+of your Grav installation:
 
 ```bash
 git clone https://github.com/sbinfo67/grav-plugin-google-tag-manager user/plugins/google-tag-manager
@@ -19,9 +22,8 @@ git clone https://github.com/sbinfo67/grav-plugin-google-tag-manager user/plugin
 
 Or download the archive of the
 [latest release](https://github.com/sbinfo67/grav-plugin-google-tag-manager/releases/latest),
-then rename the unzipped folder to `user/plugins/google-tag-manager`.
-
-Then clear the cache (`bin/grav clearcache`, or empty the `cache/` folder).
+then rename the unzipped folder to `user/plugins/google-tag-manager`, and clear the cache
+(`bin/grav clearcache`, or empty the `cache/` folder).
 
 ## Configuration
 
@@ -67,6 +69,10 @@ Once the theme has rendered the page, the plugin inserts:
   (the encoding declaration must stay within the first 1,024 bytes), otherwise right
   after `<head>`;
 - the `<noscript>` and its iframe right after the `<body>` tag.
+
+Comments and the text of `script`, `style`, `title` and `textarea` elements are skipped
+while looking for these tags, so a `<body` or `<meta charset` written inside them is not
+taken for the real one.
 
 The code is the one Google provides, with the `dataLayer` data layer. The theme has
 nothing to call. Only HTML responses are changed: XML sitemaps, feeds and JSON output are

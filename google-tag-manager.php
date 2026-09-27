@@ -105,27 +105,77 @@ class GoogleTagManagerPlugin extends Plugin
      */
     private function insertContainer(string $html, string $containerId): string
     {
-        if (!preg_match('/<head\b[^>]*>/i', $html, $head, PREG_OFFSET_CAPTURE)) {
+        $points = $this->findInsertionPoints($html);
+        if ($points === null) {
             return $html;
         }
-        $headEnd = $head[0][1] + strlen($head[0][0]);
-
-        if (!preg_match('/<body\b[^>]*>/i', $html, $body, PREG_OFFSET_CAPTURE, $headEnd)) {
-            return $html;
-        }
-        $bodyEnd = $body[0][1] + strlen($body[0][0]);
-
-        $at = $headEnd;
-        $headContent = substr($html, $headEnd, $body[0][1] - $headEnd);
-        if (preg_match('/<meta\s[^>]*charset\s*=[^>]*>/i', $headContent, $charset, PREG_OFFSET_CAPTURE)) {
-            $at += $charset[0][1] + strlen($charset[0][0]);
-        }
+        [$at, $bodyEnd] = $points;
 
         return substr($html, 0, $at)
             . "\n" . $this->getHeadContainerCode($containerId)
             . substr($html, $at, $bodyEnd - $at)
             . "\n" . $this->getBodyContainerCode($containerId)
             . substr($html, $bodyEnd);
+    }
+
+    /**
+     * Walk the document up to the opening <body> tag, skipping comments and
+     * the text of script, style, title and textarea elements, so that a tag
+     * written inside them (say '<body' in an inline script) is not taken for
+     * the real one.
+     *
+     * @return array{0: int, 1: int}|null Where the head code goes (after
+     *   <meta charset>, or after <head>) and the end of the <body> tag; null
+     *   when the document has no <head> or no <body> tag
+     */
+    private function findInsertionPoints(string $html): ?array
+    {
+        $pattern = '/<!--|<(script|style|title|textarea)(?=[\s\/>])[^>]*>'
+            . '|<head(?=[\s\/>])[^>]*>|<meta\s[^>]*charset\s*=[^>]*>|<body(?=[\s\/>])[^>]*>/i';
+        $headEnd = null;
+        $charsetEnd = null;
+        $offset = 0;
+
+        while (preg_match($pattern, $html, $match, PREG_OFFSET_CAPTURE, $offset)) {
+            [$tag, $position] = $match[0];
+            $end = $position + strlen($tag);
+
+            if ($tag === '<!--') {
+                // A comment ends at the first "-->", which may overlap "<!--".
+                $close = strpos($html, '-->', $position + 2);
+                if ($close === false) {
+                    return null;
+                }
+                $offset = $close + 3;
+                continue;
+            }
+
+            if (isset($match[1]) && $match[1][1] !== -1) {
+                // The element's text ends at its first closing tag.
+                $close = stripos($html, '</' . $match[1][0], $end);
+                if ($close === false) {
+                    return null;
+                }
+                $offset = $close;
+                continue;
+            }
+
+            switch (strtolower(substr($tag, 1, 4))) {
+                case 'head':
+                    $headEnd = $headEnd ?? $end;
+                    break;
+                case 'meta':
+                    if ($headEnd !== null && $charsetEnd === null) {
+                        $charsetEnd = $end;
+                    }
+                    break;
+                default: // body
+                    return $headEnd === null ? null : [$charsetEnd ?? $headEnd, $end];
+            }
+            $offset = $end;
+        }
+
+        return null;
     }
 
     /**
