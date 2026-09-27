@@ -1,113 +1,106 @@
-# Google Tag Manager pour Grav
+# Google Tag Manager for Grav
 
-> **In English.** A Grav plugin that inserts a Google Tag Manager container in every
-> HTML page, without touching the theme: the GTM script right at the top of `<head>`
-> (after `<meta charset>`), and its `<noscript>` fallback right after the opening
-> `<body>` tag, as Google recommends. Works with Grav 1.7 and Grav 2 (tested up to
-> 2.2.1 with Admin2 2.1.24). Set `container_id` to your `GTM-XXXXXXX` ID; an empty or
-> malformed ID inserts nothing. A page can opt out with `google-tag-manager: false` in
-> its frontmatter, or use another container with
-> `google-tag-manager: { container_id: GTM-… }`.
-> XML, JSON and other non-HTML responses are left untouched. The plugin does not
-> handle consent: use Consent Mode in GTM or a consent banner. Up to 0.2.0 the plugin
-> was named `gtm-plugin`: see below to move to `google-tag-manager`.
+A Grav plugin that inserts a Google Tag Manager container in every HTML page, without
+touching the theme: the GTM script right at the top of `<head>`, and its `<noscript>`
+fallback right after the opening `<body>` tag, as Google recommends. Works with Grav 1.7
+and Grav 2, tested up to Grav 2.2.1 with Admin2 2.1.24.
 
 ## Installation
 
-L'extension n'est pas au catalogue GPM : on l'installe à la main, dans un dossier qui
-doit s'appeler `google-tag-manager`.
+The plugin has been submitted to the GPM directory
+([getgrav/grav#4334](https://github.com/getgrav/grav/issues/4334)). Until it is listed,
+install it by hand, in a folder that must be named `google-tag-manager`.
 
-Avec git, depuis la racine de Grav :
+With git, from the root of your Grav installation:
 
 ```bash
 git clone https://github.com/sbinfo67/grav-plugin-google-tag-manager user/plugins/google-tag-manager
 ```
 
-Ou en téléchargeant l'archive de la
-[dernière version](https://github.com/sbinfo67/grav-plugin-google-tag-manager/releases/latest),
-puis en renommant le dossier décompressé en `user/plugins/google-tag-manager`.
+Or download the archive of the
+[latest release](https://github.com/sbinfo67/grav-plugin-google-tag-manager/releases/latest),
+then rename the unzipped folder to `user/plugins/google-tag-manager`.
 
-Videz ensuite le cache (`bin/grav clearcache`, ou le contenu de `cache/`).
+Then clear the cache (`bin/grav clearcache`, or empty the `cache/` folder).
 
-## Réglages
+## Configuration
 
-Dans Admin2 ou l'administration classique : Extensions, puis **Google Tag Manager**.
-Activez l'extension et saisissez l'identifiant du conteneur, affiché en haut à droite
-de l'espace de travail Tag Manager.
+In Admin2 or the classic admin: Plugins, then **Google Tag Manager**. Enable the plugin
+and enter the container ID, shown at the top right of the Tag Manager workspace.
 
-Ou dans `user/config/plugins/google-tag-manager.yaml` :
+Or in `user/config/plugins/google-tag-manager.yaml`:
 
 ```yaml
 enabled: true
 container_id: GTM-XXXXXXX
 ```
 
-| Clé | Par défaut | Rôle |
+| Key | Default | Purpose |
 |---|---|---|
-| `enabled` | `false` | Active l'extension |
-| `container_id` | vide | Identifiant du conteneur, de la forme `GTM-XXXXXXX` |
+| `enabled` | `false` | Turns the plugin on |
+| `container_id` | empty | Container ID, of the form `GTM-XXXXXXX` |
 
-L'identifiant est ramené en majuscules et débarrassé de ses espaces. Tant qu'il est
-vide, rien n'est inséré et rien n'est journalisé. S'il n'a pas la forme `GTM-` suivie
-de lettres et de chiffres, rien n'est inséré non plus, et un avertissement est écrit
-une fois dans `logs/grav.log`.
+The ID is upper-cased and trimmed. While it is empty, nothing is inserted and nothing is
+logged. If it does not look like `GTM-` followed by letters and digits, nothing is
+inserted either, and a warning is written once to `logs/grav.log`.
 
-### Page par page
+The settings screen is available in English and French.
 
-L'en-tête d'une page peut changer ces réglages pour elle seule :
+### Per page
+
+A page can override these settings for itself in its frontmatter:
 
 ```yaml
-google-tag-manager: false    # pas de GTM sur cette page
+google-tag-manager: false    # no GTM on this page
 ```
 
 ```yaml
 google-tag-manager:
-  container_id: GTM-AUTRE42  # un autre conteneur
+  container_id: GTM-OTHER42  # another container
 ```
 
-## Ce que fait l'extension
+## What the plugin does
 
-Une fois la page produite par le thème, l'extension insère :
+Once the theme has rendered the page, the plugin inserts:
 
-- le script de GTM en haut du `<head>`, juste après `<meta charset>` s'il existe
-  (la déclaration d'encodage doit rester dans les 1 024 premiers octets), sinon
-  juste après `<head>` ;
-- le `<noscript>` et son iframe juste après la balise `<body>`.
+- the GTM script at the top of `<head>`, right after `<meta charset>` when there is one
+  (the encoding declaration must stay within the first 1,024 bytes), otherwise right
+  after `<head>`;
+- the `<noscript>` and its iframe right after the `<body>` tag.
 
-Le code est celui que fournit Google, avec la couche de données `dataLayer`. Le thème
-n'a rien à appeler. Seules les réponses HTML sont modifiées, et l'administration n'est
-jamais touchée.
+The code is the one Google provides, with the `dataLayer` data layer. The theme has
+nothing to call. Only HTML responses are changed: XML sitemaps, feeds and JSON output are
+left untouched, and so are the admin and the API.
 
-## Consentement
+## Consent
 
-L'extension charge GTM sur chaque page, sans attendre le consentement du visiteur.
-Sur un site soumis au RGPD, configurez le mode Consentement (Consent Mode) dans GTM,
-ou un bandeau de gestion du consentement qui s'y raccorde.
+The plugin loads GTM on every page, without waiting for the visitor's consent. Where the
+GDPR applies, set up Consent Mode in GTM, or a consent banner that connects to it.
 
-## Passage depuis `gtm-plugin`
+## Moving from `gtm-plugin`
 
-Jusqu'à la 0.2.0, l'extension s'appelait `gtm-plugin`. Depuis la 1.0.0, elle s'appelle
-`google-tag-manager`, et tous ses noms ont suivi :
+Up to 0.2.0, the plugin was named `gtm-plugin`. Since 1.0.0 it is named
+`google-tag-manager`, and all its names followed:
 
-1. Supprimez le dossier `user/plugins/gtm-plugin` et installez celui-ci dans
+1. Delete the `user/plugins/gtm-plugin` folder and install this one in
    `user/plugins/google-tag-manager`.
-2. Renommez `user/config/plugins/gtm-plugin.yaml` en `google-tag-manager.yaml`. Les clés
-   `enabled` et `container_id` ne changent pas.
-3. Dans l'en-tête des pages, remplacez `gtm-plugin:` par `google-tag-manager:`.
-4. Videz le cache.
+2. Rename `user/config/plugins/gtm-plugin.yaml` to `google-tag-manager.yaml`. The
+   `enabled` and `container_id` keys do not change.
+3. In page frontmatter, replace `gtm-plugin:` with `google-tag-manager:`.
+4. Clear the cache.
 
-Depuis la 0.1.0, le code n'est plus inséré par `assets.js()` mais directement dans la
-page, en haut du `<head>` : retirez tout code GTM ajouté à la main dans le thème, sans
-quoi le conteneur serait chargé deux fois.
+Since 0.2.0, the code is no longer added through `assets.js()` but written into the page
+itself, at the top of `<head>`: remove any GTM code added by hand to the theme, or the
+container would load twice.
 
-## Crédits
+## Credits
 
-Extension créée par James H Murphy
+Plugin created by James H Murphy
 ([jaymurphy1997/grav-plugin-gtm-plugin](https://github.com/jaymurphy1997/grav-plugin-gtm-plugin)),
-elle-même inspirée de l'extension
-[Grav Ganalytics](https://github.com/escopecz/grav-ganalytics). Reprise et corrigée
-par SBINFO à partir de la 0.2.0, renommée `google-tag-manager` en 1.0.0.
+itself inspired by the [Grav Ganalytics](https://github.com/escopecz/grav-ganalytics)
+plugin. Taken over and fixed by SBINFO from 0.2.0, renamed `google-tag-manager` in
+1.0.0.
 
-## Licence
+## License
 
-MIT, voir [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
